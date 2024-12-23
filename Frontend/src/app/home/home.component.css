@@ -1,0 +1,63 @@
+.container {
+  max-width: 800px;
+}
+
+.card {
+  border-radius: 12px;
+}
+
+#bg {
+  background-color: #f8f9fa;
+  background: url('../assets/images/image.png') no-repeat center center fixed;
+  background-size: cover;
+  width: 100%;
+  height: 100vh; /* Full viewport height */
+  display: flex;
+  align-items: center; /* Vertically center the content */
+  justify-content: center; /* Horizontally center the content */
+}
+
+.card-body {
+  padding: 16px;
+}
+
+.card-body p {
+  font-size: 14px;
+}
+
+.card-body .btn {
+  font-size: 12px;
+  padding: 6px 10px;
+}
+
+textarea {
+  resize: vertical;
+  height: 100px;
+}
+
+/* Arrow Icon Styling */
+.arrow-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5rem;
+  color: #ff0000; /* Blue color for the arrow */
+  margin-top: 1rem; /* Adjust vertical spacing */
+  position: absolute;  /* Absolute positioning to place the arrow outside */
+  top: 50%;
+  right: -20px;  /* Adjust to place the arrow between cards */
+  transform: translateY(-50%); /* Center the arrow vertically */
+  z-index: 1;
+}
+
+/* Ensure cards are placed in a row with wrapping disabled */
+.d-flex {
+  display: flex;
+  flex-wrap: nowrap;
+}
+
+/* Adjust margin between cards */
+.card {
+  margin-right: 20px; /* Add some space between cards */
+  position: relative; /* Allow absolute positioning of the arrow */
+}
