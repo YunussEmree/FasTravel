@@ -42,17 +42,17 @@
       <!-- Make the list horizontally scrollable -->
       <div class="d-flex flex-row" style="flex-wrap: nowrap;">
         <!-- Location Cards -->
-        <div *ngFor="let item of seyahatListesi; let i = index" class="card shadow-sm mb-3 mx-2">
+         <div *ngFor="let item of seyahatListesi; let i = index; trackBy: trackByFn" class="card shadow-sm mb-3 mx-2">
           <div class="card-body d-flex align-items-center justify-content-between">
             <div class="d-flex flex-column">
               <h5 [class.text-decoration-line-through]="item.gidildi" class="mb-0 fw-bold">
-                {{ item.nereye }}
+                {{ item.name }}
               </h5>
               <p class="text-muted mb-2" style="font-size: 0.9rem;">
-                Tarih: {{ item.tarih }}
+                Tarih: {{ item.date }}
               </p>
-              <p *ngIf="item.not" class="text-muted fst-italic" style="font-size: 0.85rem;">
-                Not: {{ item.not }}
+              <p *ngIf="item.note" class="text-muted fst-italic" style="font-size: 0.85rem;">
+                Not: {{ item.note }}
               </p>
             </div>
         

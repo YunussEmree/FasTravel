@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-
+import { Component, OnInit } from '@angular/core';
+import { LocationService } from '../services/location.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
@@ -8,49 +8,95 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [FormsModule, CommonModule],
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  styleUrls: ['./home.component.css'],
 })
-
-export class HomeComponent {
-  model: { nereye: string; tarih: string; not: string } = { nereye: '', tarih: '', not: '' };
-
+export class HomeComponent implements OnInit {
   nereye: string = '';
   tarih: string = '';
   not: string = '';
+  seyahatListesi: any[] = [];
 
-  seyahatListesi: { nereye: string; tarih: string; not: string; gidildi: boolean }[] = [];
+  constructor(private locationService: LocationService) {}
+
+  ngOnInit() {
+    this.getLocations();
+    console.log(this.seyahatListesi);
+  }
+
+  getLocations() {
+    this.locationService.getLocations().subscribe((locations) => {
+      this.seyahatListesi = locations;
+    });
+  }
 
   ekle() {
     if (this.nereye && this.tarih) {
-      this.seyahatListesi.push({
-        nereye: this.nereye,
-        tarih: this.tarih,
-        not: this.not,
-        gidildi: false
-      });
-
-      // Alanları temizle
-      this.nereye = '';
-      this.tarih = '';
-      this.not = '';
+      const newLocation = { name: this.nereye, date: this.tarih, note: this.not };
+  
+      this.locationService.addLocation(newLocation).subscribe(
+        (addedLocation) => {
+          this.seyahatListesi = [...this.seyahatListesi, addedLocation]; // Yeni bir liste oluşturun
+          this.nereye = '';
+          this.tarih = '';
+          this.not = '';
+        },
+        (error) => {
+          console.error('Hata:', error);
+        }
+      );
     } else {
       alert('Lütfen tüm alanları doldurun!');
     }
   }
+  
 
   sil(index: number) {
-    this.seyahatListesi.splice(index, 1);
+    const location = this.seyahatListesi[index];
+
+    this.locationService.deleteLocation(location.id).subscribe(() => {
+      this.seyahatListesi.splice(index, 1);
+    });
   }
 
   duzenle(index: number) {
     const item = this.seyahatListesi[index];
-    this.nereye = item.nereye;
-    this.tarih = item.tarih;
-    this.not = item.not;
-    this.seyahatListesi.splice(index, 1);
+    this.nereye = item.name;
+    this.tarih = item.date;
+    this.not = item.note;
+
+    this.locationService.deleteLocation(item.id).subscribe(() => {
+      this.seyahatListesi.splice(index, 1);
+    });
   }
 
   gidildi(index: number) {
-    this.seyahatListesi[index].gidildi = !this.seyahatListesi[index].gidildi;
+    const location = this.seyahatListesi[index];
+
+  
+    // `gidildi` durumunu tersine çevir
+    const updatedLocation = { ...location, gidildi: !location.gidildi };
+  
+    // Backend'e güncelleme isteği gönder
+    this.locationService.updateLocation(location.id, updatedLocation).subscribe(
+      (response) => {
+        // Backend'den dönen güncel veriyi listeye yaz
+        this.seyahatListesi[index] = response;
+  
+        // Başarılı güncelleme için bildirim/log
+        console.log(`'gidildi' durumu güncellendi:`, response);
+      },
+      (error) => {
+        // Hata durumunda eski değeri geri al
+        console.error(`'gidildi' durumu güncellenirken hata oluştu:`, error);
+        alert('Güncelleme sırasında bir hata oluştu!');
+      }
+    );
+    alert(updatedLocation.gidildi);
   }
+  
+
+  trackByFn(index: number, item: any): any {
+    return item.id; // Benzersiz bir ID'yi kullanarak değişiklikleri takip edin
+  }
+  
 }

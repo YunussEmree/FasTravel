@@ -1,63 +1,56 @@
 package com.yunussemree.fas_travel.location;
 
-import com.yunussemree.fas_travel.util.NotFoundException;
-import java.util.List;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.LinkedList;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicLong;
 
+// LocationService class
 @Service
 public class LocationService {
 
-    private final LocationRepository locationRepository;
+    private LinkedList<Location> locations = new LinkedList<>();
+    private AtomicLong idGenerator = new AtomicLong(1);
 
-    public LocationService(final LocationRepository locationRepository) {
-        this.locationRepository = locationRepository;
-    }
-
-    public List<LocationDTO> findAll() {
-        final List<Location> locations = locationRepository.findAll(Sort.by("id"));
-        return locations.stream()
-                .map(location -> mapToDTO(location, new LocationDTO()))
-                .toList();
-    }
-
-    public LocationDTO get(final Long id) {
-        return locationRepository.findById(id)
-                .map(location -> mapToDTO(location, new LocationDTO()))
-                .orElseThrow(NotFoundException::new);
-    }
-
-    public Long create(final LocationDTO locationDTO) {
-        final Location location = new Location();
-        mapToEntity(locationDTO, location);
-        return locationRepository.save(location).getId();
-    }
-
-    public void update(final Long id, final LocationDTO locationDTO) {
-        final Location location = locationRepository.findById(id)
-                .orElseThrow(NotFoundException::new);
-        mapToEntity(locationDTO, location);
-        locationRepository.save(location);
-    }
-
-    public void delete(final Long id) {
-        locationRepository.deleteById(id);
-    }
-
-    private LocationDTO mapToDTO(final Location location, final LocationDTO locationDTO) {
-        locationDTO.setId(location.getId());
-        locationDTO.setName(location.getName());
-        locationDTO.setDate(location.getDate());
-        locationDTO.setNote(location.getNote());
-        return locationDTO;
-    }
-
-    private Location mapToEntity(final LocationDTO locationDTO, final Location location) {
-        location.setName(locationDTO.getName());
-        location.setDate(locationDTO.getDate());
-        location.setNote(locationDTO.getNote());
+    // Ekleme metodu
+    public Location addLocation(Location location) {
+        location.setId(idGenerator.getAndIncrement());
+        locations.add(location);
         return location;
     }
 
+    // Silme metodu
+    public boolean deleteLocation(Long id) {
+        Optional<Location> location = locations.stream()
+                .filter(loc -> loc.getId().equals(id))
+                .findFirst();
+
+        if (location.isPresent()) {
+            locations.remove(location.get());
+            return true;
+        }
+        return false;
+    }
+
+    // Düzenleme metodu
+    public Location updateLocation(Long id, Location updatedLocation) {
+        Optional<Location> location = locations.stream()
+                .filter(loc -> loc.getId().equals(id))
+                .findFirst();
+
+        if (location.isPresent()) {
+            Location existingLocation = location.get();
+            existingLocation.setName(updatedLocation.getName());
+            existingLocation.setDate(updatedLocation.getDate());
+            existingLocation.setNote(updatedLocation.getNote());
+            return existingLocation;
+        }
+        return null;
+    }
+
+    // Tüm verileri listeleme
+    public LinkedList<Location> getAllLocations() {
+        return locations;
+    }
 }
