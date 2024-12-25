@@ -3,7 +3,6 @@ package com.yunussemree.fas_travel.location;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.LinkedList;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("${api.prefix}/locations")
@@ -38,21 +37,4 @@ public class LocationController {
         }
         return location;
     }
-
-    @PatchMapping("/{id}/gidildi")
-    public Location markAsVisited(@PathVariable Long id, @RequestBody boolean gidildi) {
-        Optional<Location> location = locationService.getAllLocations().stream()
-                .filter(loc -> loc.getId().equals(id))
-                .findFirst();
-
-        if (location.isPresent()) {
-            location.get().setGidildi(gidildi);
-            return location.get();
-        } else {
-            throw new RuntimeException("Location with id " + id + " not found.");
-        }
-    }
-
-
-
 }

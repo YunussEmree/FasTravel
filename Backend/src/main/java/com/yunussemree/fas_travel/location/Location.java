@@ -16,7 +16,7 @@ public class Location {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
     private String note;
-    private boolean gidildi = false;
+    //private boolean gidildi = false; //TODO extra feature
 
 
 }

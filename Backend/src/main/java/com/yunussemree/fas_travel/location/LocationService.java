@@ -40,12 +40,10 @@ public class LocationService {
             existingLocation.setName(updatedLocation.getName());
             existingLocation.setDate(updatedLocation.getDate());
             existingLocation.setNote(updatedLocation.getNote());
-            existingLocation.setGidildi(updatedLocation.isGidildi()); // Gidildi alanını güncelle
             return existingLocation;
         }
         return null;
     }
-
 
     public LinkedList<Location> getAllLocations() {
         return locations;
