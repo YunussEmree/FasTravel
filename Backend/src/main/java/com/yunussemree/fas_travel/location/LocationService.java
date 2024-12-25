@@ -6,21 +6,18 @@ import java.util.LinkedList;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
-// LocationService class
 @Service
 public class LocationService {
 
     private LinkedList<Location> locations = new LinkedList<>();
     private AtomicLong idGenerator = new AtomicLong(1);
 
-    // Ekleme metodu
     public Location addLocation(Location location) {
         location.setId(idGenerator.getAndIncrement());
         locations.add(location);
         return location;
     }
 
-    // Silme metodu
     public boolean deleteLocation(Long id) {
         Optional<Location> location = locations.stream()
                 .filter(loc -> loc.getId().equals(id))
@@ -33,7 +30,6 @@ public class LocationService {
         return false;
     }
 
-    // Düzenleme metodu
     public Location updateLocation(Long id, Location updatedLocation) {
         Optional<Location> location = locations.stream()
                 .filter(loc -> loc.getId().equals(id))
@@ -44,13 +40,15 @@ public class LocationService {
             existingLocation.setName(updatedLocation.getName());
             existingLocation.setDate(updatedLocation.getDate());
             existingLocation.setNote(updatedLocation.getNote());
+            existingLocation.setGidildi(updatedLocation.isGidildi()); // Gidildi alanını güncelle
             return existingLocation;
         }
         return null;
     }
 
-    // Tüm verileri listeleme
+
     public LinkedList<Location> getAllLocations() {
         return locations;
     }
+
 }

@@ -33,13 +33,12 @@
         </div>
       </div>
       <div class="d-flex justify-content-end mt-3">
-        <button class="btn btn-success" (click)="ekle()">Ekle</button>
+        <button *ngIf="!isEditing" class="btn btn-success" (click)="ekle()">Ekle</button>
+        <button *ngIf="isEditing" class="btn btn-primary" (click)="kaydet()">Kaydet</button>
       </div>
     </div>
 
-    <!-- Location List -->
     <div class="mt-4" style="overflow-x: auto;">
-      <!-- Make the list horizontally scrollable -->
       <div class="d-flex flex-row" style="flex-wrap: nowrap;">
         <!-- Location Cards -->
          <div *ngFor="let item of seyahatListesi; let i = index; trackBy: trackByFn" class="card shadow-sm mb-3 mx-2">
@@ -56,7 +55,6 @@
               </p>
             </div>
         
-            <!-- Buttons -->
             <div class="d-flex align-items-center">
               <!-- Delete Button -->
               <button
@@ -74,20 +72,12 @@
               >
                 <i class="bi bi-pencil"></i>
               </button>
-              <!-- Mark as Visited Button -->
-              <button
-                class="btn btn-success btn-sm rounded-circle"
-                (click)="gidildi(i)"
-                title="Gidildi"
-              >
-                <i class="bi bi-check"></i>
-              </button>
+              <!-- TODO: Visited button will be added -->
             </div>
           </div>
 
-          <!-- Display Arrow Icon outside the location cards -->
           <div *ngIf="i < seyahatListesi.length - 1" class="arrow-icon">
-            <i class="bi bi-arrow-right"></i> <!-- Bootstrap icon for arrow -->
+            <i class="bi bi-arrow-right"></i>
           </div>
         </div>
       </div>

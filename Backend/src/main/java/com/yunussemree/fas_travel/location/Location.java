@@ -11,12 +11,12 @@ import java.time.LocalDate;
 @Getter
 @AllArgsConstructor
 public class Location {
-    // Getters and Setters
     private Long id;
     private String name;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
     private String note;
+    private boolean gidildi = false;
 
 
 }

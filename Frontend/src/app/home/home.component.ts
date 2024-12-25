@@ -35,7 +35,7 @@ export class HomeComponent implements OnInit {
   
       this.locationService.addLocation(newLocation).subscribe(
         (addedLocation) => {
-          this.seyahatListesi = [...this.seyahatListesi, addedLocation]; // Yeni bir liste oluşturun
+          this.seyahatListesi = [...this.seyahatListesi, addedLocation];
           this.nereye = '';
           this.tarih = '';
           this.not = '';
@@ -58,45 +58,69 @@ export class HomeComponent implements OnInit {
     });
   }
 
+  isEditing: boolean = false;
+  editingIndex: number | null = null;
+  
   duzenle(index: number) {
+    this.isEditing = true;
+    this.editingIndex = index;
+  
     const item = this.seyahatListesi[index];
     this.nereye = item.name;
     this.tarih = item.date;
     this.not = item.note;
-
-    this.locationService.deleteLocation(item.id).subscribe(() => {
-      this.seyahatListesi.splice(index, 1);
-    });
   }
-
-  gidildi(index: number) {
-    const location = this.seyahatListesi[index];
-
   
-    // `gidildi` durumunu tersine çevir
+  kaydet() {
+    if (this.editingIndex !== null) {
+      const index = this.editingIndex;
+      const updatedLocation = {
+        ...this.seyahatListesi[index],
+        name: this.nereye,
+        date: this.tarih,
+        note: this.not,
+      };
+  
+      this.locationService.updateLocation(updatedLocation.id, updatedLocation).subscribe(
+        (response) => {
+          this.seyahatListesi[index] = response;
+          this.isEditing = false;
+          this.editingIndex = null;
+          this.nereye = '';
+          this.tarih = '';
+          this.not = '';
+        },
+        (error) => {
+          console.error(`Düzenleme sırasında hata:`, error);
+          alert('Düzenleme sırasında bir hata oluştu!');
+        }
+      );
+    }
+  }
+  
+  
+  gidildi(index: number) { //TODO: Fix and implement this method
+    const location = this.seyahatListesi[index];
+  
     const updatedLocation = { ...location, gidildi: !location.gidildi };
   
-    // Backend'e güncelleme isteği gönder
     this.locationService.updateLocation(location.id, updatedLocation).subscribe(
       (response) => {
-        // Backend'den dönen güncel veriyi listeye yaz
         this.seyahatListesi[index] = response;
   
-        // Başarılı güncelleme için bildirim/log
         console.log(`'gidildi' durumu güncellendi:`, response);
       },
       (error) => {
-        // Hata durumunda eski değeri geri al
         console.error(`'gidildi' durumu güncellenirken hata oluştu:`, error);
         alert('Güncelleme sırasında bir hata oluştu!');
       }
     );
-    alert(updatedLocation.gidildi);
   }
+  
   
 
   trackByFn(index: number, item: any): any {
-    return item.id; // Benzersiz bir ID'yi kullanarak değişiklikleri takip edin
+    return item.id;
   }
   
 }
